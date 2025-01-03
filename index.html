@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="light-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Updates</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="admin-controls">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <button id="admin-login" class="open-form-btn">Admin Login</button>
+                <button id="admin-logout" class="open-form-btn" style="display: none;">Logout</button>
+            </div>
+            <h1>Football Updates</h1>
+            <p>Latest commitments, transfers, and visits</p>
+            <div class="header-buttons">
+                <button id="open-form" class="open-form-btn" style="display: none;">Add New Player</button>
+            </div>
+            <div class="filter-controls">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="transfer-portal">Transfer Portal</button>
+                <button class="filter-btn" data-filter="hs-commitment">HS Commitment</button>
+                <button class="filter-btn" data-filter="visit">Visit</button>
+                <button class="filter-btn" data-filter="offer">Offer</button>
+            </div>
+        </header>
+
+        <section class="commit-list" id="commit-list">
+            <!-- Players will be loaded here -->
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p class="copyright">© 2024</p>
+        <p class="disclaimer"><strong>Disclaimer:</strong> This site is for informational purposes only.</p>
+    </footer>
+
+    <div id="player-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close">&times;</span>
+            <h2>Add New Player</h2>
+            <form id="player-form">
+                <div class="form-group">
+                    <label for="player-name">Player Name</label>
+                    <input type="text" id="player-name" placeholder="Enter player name" required>
+                </div>
+                <div class="form-group">
+                    <label for="from-school">From School</label>
+                    <input type="text" id="from-school" placeholder="Enter previous school">
+                </div>
+                <div class="form-group">
+                    <label for="to-school">To School</label>
+                    <input type="text" id="to-school" placeholder="Enter destination school">
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., QB, WR">
+                    </div>
+                    <div class="form-group half">
+                        <label for="class">Class</label>
+                        <input type="number" id="class" placeholder="Years of Eligibility Remaining">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="height">Height</label>
+                        <input type="text" id="height" placeholder='e.g., 6&#39;2"'>
+                    </div>
+                    <div class="form-group half">
+                        <label for="weight">Weight (lbs)</label>
+                        <input type="number" id="weight" placeholder="Weight">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="twitter">X (Twitter) Handle</label>
+                    <div class="twitter-input-wrapper">
+                        <span class="twitter-prefix">@</span>
+                        <input type="text" id="twitter" placeholder="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" placeholder="Enter player description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="image">Image URL</label>
+                    <input type="url" id="image" placeholder="Enter image URL">
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="recruit-grade">Recruit Grade</label>
+                        <input type="number" id="recruit-grade" placeholder="Grade" step="0.1">
+                    </div>
+                    <div class="form-group half">
+                        <label for="college-grade">College Grade</label>
+                        <input type="number" id="college-grade" placeholder="Grade" step="0.1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="commit-type">Commitment Type</label>
+                    <select id="commit-type" required>
+                        <option value="">Select type</option>
+                        <option value="Transfer Portal">Transfer Portal</option>
+                        <option value="HS Commitment">HS Commitment</option>
+                        <option value="Visit">Visit</option>
+                        <option value="Offer">Offer</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Add Player</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference, default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.classList.add(`${savedTheme}-theme`);
+
+        // Update button state based on current theme
+        const updateThemeToggle = () => {
+            const isDark = html.classList.contains('dark-theme');
+            themeToggle.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} theme`);
+        };
+
+        updateThemeToggle();
+
+        // Theme toggle handler
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark-theme');
+            html.classList.toggle('light-theme');
+            
+            const newTheme = html.classList.contains('dark-theme') ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            
+            updateThemeToggle();
+        });
+        
+        // Set your API base URL in environment variables or configuration
+        const API_BASE_URL = '/api';  // This will use relative path instead of hardcoded URL
+        let isAdmin = false;
+        let currentFilter = 'all';
+
+        // Filter buttons handling
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentFilter = button.dataset.filter;
+                loadPlayers();
+            });
+        });
+
+        // Check admin status on load
+        function checkAdminStatus() {
+            const adminToken = localStorage.getItem('adminToken');
+            if (adminToken === process.env.ADMIN_TOKEN) {
+                isAdmin = true;
+                document.body.classList.add('is-admin');
+                document.getElementById('open-form').style.display = 'inline-block';
+                document.getElementById('admin-logout').style.display = 'inline-block';
+                document.getElementById('admin-login').style.display = 'none';
+            } else {
+                isAdmin = false;
+                document.body.classList.remove('is-admin');
+                document.getElementById('open-form').style.display = 'none';
+                document.getElementById('admin-logout').style.display = 'none';
+                document.getElementById('admin-login').style.display = 'inline-block';
+                localStorage.removeItem('adminToken');
+            }
+        }
+
+        // Admin logout handler
+        document.getElementById('admin-logout').addEventListener('click', () => {
+            localStorage.removeItem('adminToken');
+            isAdmin = false;
+            checkAdminStatus();
+            loadPlayers();
+        });
+
+        // Admin login handler
+        document.getElementById('admin-login').addEventListener('click', () => {
+            const password = prompt('Enter admin password:');
+            if (password && password === process.env.ADMIN_TOKEN) {
+                localStorage.setItem('adminToken', password);
+                isAdmin = true;
+                checkAdminStatus();
+                loadPlayers();
+            } else {
+                alert('Incorrect password');
+                localStorage.removeItem('adminToken');
+                isAdmin = false;
+                checkAdminStatus();
+            }
+        });
+
+        // Modal handling
+        const modal = document.getElementById('player-modal');
+        const openFormBtn = document.getElementById('open-form');
+        const closeModal = document.getElementById('close-modal');
+
+        openFormBtn.onclick = () => modal.style.display = "block";
+        closeModal.onclick = () => modal.style.display = "none";
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Load existing players
+        async function loadPlayers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/players`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const players = await response.json();
+                
+                const commitList = document.getElementById('commit-list');
+                commitList.innerHTML = '';
+                
+                players.forEach(player => {
+                    if (currentFilter === 'all' || 
+                        player.commitType?.toLowerCase().replace(' ', '-') === currentFilter) {
+                        const playerCard = createPlayerCard(player);
+                        commitList.appendChild(playerCard);
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading players:', error);
+            }
+        }
+
+        // Create player card element
+        function createPlayerCard(player) {
+            const playerCard = document.createElement('article');
+            playerCard.classList.add('commit-card');
+            
+            const xLink = player.twitter ? 
+                `<div class="social-links">
+                    <a href="https://twitter.com/${player.twitter}" target="_blank" rel="noopener" class="x-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        @${player.twitter}
+                    </a>
+                </div>` : '';
+            
+            playerCard.innerHTML = `
+                <div class="commit-header">
+                    <img src="${player.image || 'https://via.placeholder.com/120'}" alt="${player.playerName || 'Unknown Player'}" class="player-image">
+                    <span class="badge ${player.commitType?.toLowerCase().replace(' ', '-') || 'unknown'}">
+                        ${player.commitType || 'Unknown Type'}
+                    </span>
+                </div>
+                <div class="commit-info">
+                    <h2>${player.playerName || 'Unknown Player'}</h2>
+                    <p class="player-details">${player.position || 'Unknown Position'} • Eligibility Remaining: ${player.playerClass || '?'}</p>
+                    <div class="player-stats">
+                        <div>${player.height || 'Unknown Height'}</div>
+                        <div>${player.weight ? player.weight + ' lbs' : 'Unknown Weight'}</div>
+                    </div>
+                    <div class="grades">
+                        <div>
+                            <span>Recruit Grade</span>
+                            <strong>${player.recruitGrade || 'N/A'}</strong>
+                        </div>
+                        <div>
+                            <span>College Grade</span>
+                            <strong>${player.collegeGrade || 'N/A'}</strong>
+                        </div>
+                    </div>
+                    <div class="transfer-info">
+                        <div class="school-info">
+                            <span>${player.fromSchool || 'Unknown School'}</span>
+                        </div>
+                        <span>→</span>
+                        <div class="school-info">
+                            <span>${player.toSchool || '?'}</span>
+                        </div>
+                    </div>
+                    ${xLink}
+                    ${player.description ? `<div class="player-description"><p>${player.description}</p></div>` : ''}
+                </div>
+                <button class="delete-btn" data-id="${player._id}">Delete Player</button>
+            `;
+            
+            const deleteButton = playerCard.querySelector('.delete-btn');
+            deleteButton.addEventListener('click', async () => {
+                if (!isAdmin) return;
+                
+                const playerId = player._id;
+                try {
+                    const response = await fetch(`${API_BASE_URL}/players/${playerId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'admin-token': localStorage.getItem('adminToken')
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        playerCard.remove();
+                    } else {
+                        console.error('Failed to delete player');
+                        if (response.status === 403) {
+                            alert('Unauthorized. Please log in as admin.');
+                            localStorage.removeItem('adminToken');
+                            checkAdminStatus();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error deleting player:', error);
+                }
+            });
+            
+            return playerCard;
+        }
+
+        // Form submission
+        document.getElementById('player-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!isAdmin) {
+                alert('You must be logged in as admin to add players');
+                return;
+            }
+
+            const formData = {
+                playerName: document.getElementById('player-name').value,
+                fromSchool: document.getElementById('from-school').value,
+                toSchool: document.getElementById('to-school').value,
+                position: document.getElementById('position').value,
+                playerClass: document.getElementById('class').value,
+                height: document.getElementById('height').value,
+                weight: document.getElementById('weight').value,
+                image: document.getElementById('image').value,
+                recruitGrade: document.getElementById('recruit-grade').value,
+                collegeGrade: document.getElementById('college-grade').value,
+                commitType: document.getElementById('commit-type').value,
+                twitter: document.getElementById('twitter').value.replace('@', ''),
+                description: document.getElementById('description').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/players`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'admin-token': localStorage.getItem('adminToken')
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    document.getElementById('player-form').reset();
+                    modal.style.display = 'none';
+                    loadPlayers();
+                } else {
+                    if (response.status === 403) {
+                        alert('Unauthorized. Please log in as admin.');
+                        localStorage.removeItem('adminToken');
+                        checkAdminStatus();
+                    } else {
+                        console.error('Failed to add player');
+                    }
+                }
+            } catch (error) {
+                console.error('Error adding player:', error);
+            }
+        });
+
+        // Check admin status and load players when page loads
+        checkAdminStatus();
+        loadPlayers();
+    </script>
+</body>
+</html>
